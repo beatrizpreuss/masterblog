@@ -1,0 +1,14 @@
+[
+    {
+        "id": "2d2f4552-388c-4ee4-a1c3-cd1ef91014f4",
+        "title": "First Post",
+        "author": "Hopeful learner",
+        "content": "I am learning Flask and Jinja2"
+    },
+    {
+        "id": "5a96c4fb-b280-4fec-a8a3-1f66d4ddef99",
+        "title": "Project Day 2",
+        "author": "Beatriz",
+        "content": "I am implementing POST requests that use forms to update information"
+    }
+]
