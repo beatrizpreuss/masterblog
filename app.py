@@ -7,15 +7,33 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    with open("blog_posts.json", "r") as file:
+    """Render the homepage with blog posts loaded from a JSON file.
+
+    Reads blog post data from 'blog_posts.json' and passes it to the
+    'index.html' template for rendering.
+
+    Returns:
+        Response: Rendered HTML page displaying the blog posts.
+    """
+    with open("blog_posts.json", "r", encoding="utf-8") as file:
         blog_posts = json.load(file)
         return render_template('index.html', posts=blog_posts)
 
 
 @app.route('/add', methods=['GET', 'POST'])
 def add():
-    """Using the post method, gets information from the form and adds
-    it to the json file"""
+    """Add a new blog post to the JSON file.
+
+    Handles form submission from 'add.html' using the POST method.
+    If the form is valid, the new blog post is saved to 'blog_posts.json'
+    and the user is redirected to the homepage. If accessed via GET or if
+    there is an error, the 'add.html' page is rendered again.
+
+    Returns:
+        Response: A redirect to homepage after a successful POST.
+        OR
+        Response: The 'add.html' page in case of error or if request method is GET.
+    """
     if request.method == 'POST':
         title = request.form.get("title")
         author = request.form.get("author")
@@ -23,7 +41,7 @@ def add():
         post_id = uuid.uuid4()
         new_post = {"id": str(post_id), "title": title, "author": author, "content": content}
 
-        with open("blog_posts.json", "r+") as file:
+        with open("blog_posts.json", "r+", encoding="utf-8") as file:
             try:
                 blog_posts = json.load(file)
             except json.JSONDecodeError:
@@ -40,9 +58,19 @@ def add():
 
 @app.route('/delete/<post_id>')
 def delete(post_id):
-    """Filters out the blog post that needs to be deleted, creating a new list
-     without it. Updates the json file and redirects back to the home page"""
-    with open("blog_posts.json", "r+") as file:
+    """Delete a blog post from the JSON file.
+
+    Opens 'blog_posts.json' and loops through the posts to create a
+    new list of posts without the post that matches the 'post_id'.
+    Saves the new list to 'blog_posts.json'.
+
+    Args:
+        post_id (str): The id of the post to be deleted.
+
+    Returns:
+        Response: A redirect to the homepage.
+    """
+    with open("blog_posts.json", "r+", encoding="utf-8") as file:
         blog_posts = json.load(file)
 
         updated_posts = []
@@ -59,9 +87,21 @@ def delete(post_id):
 
 @app.route('/update/<post_id>', methods=['GET', 'POST'])
 def update(post_id):
-    """GET request: display update form with current info,
-    POST request: update post info and redirect to index page"""
-    with open("blog_posts.json", "r+") as file:
+    """Update a post in the JSON file.
+
+    Handles GET and POST requests. On GET, it renders the update form
+    pre-filled with the existing blog post data. On POST, it updates the
+    blog post with new data from the form and saves it to 'blog_posts.json'.
+
+    Args:
+        post_id (str): The id of the post to be updated.
+
+    Returns:
+        Response: The 'update.html' form page if the request is GET or the post is not found.
+        OR
+        Response: A redirect to the homepage after a successful POST update.
+    """
+    with open("blog_posts.json", "r+", encoding="utf-8") as file:
         blog_posts = json.load(file)
         post_to_update = None
         for post in blog_posts:
